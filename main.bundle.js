@@ -19,14 +19,18 @@ var TodoItem = (function () {
         return this.done;
     };
     TodoItem.prototype.markDone = function () {
-        this.done = true;
-        this.doneDate = new Date().getTime();
-        this.updateDate = new Date().getTime();
+        if (!this.done) {
+            this.done = true;
+            this.doneDate = new Date().getTime();
+            this.updateDate = new Date().getTime();
+        }
         return this;
     };
     TodoItem.prototype.markUndone = function () {
-        this.done = false;
-        this.updateDate = new Date().getTime();
+        if (this.done) {
+            this.done = false;
+            this.updateDate = new Date().getTime();
+        }
         return this;
     };
     TodoItem.prototype.toggleDone = function () {
@@ -554,7 +558,7 @@ module.exports = "<div class=\"left-aligned-list-item flex-container horizontal-
 /***/ 467:
 /***/ (function(module, exports) {
 
-module.exports = "<div>\n  <div *ngIf=\"showDetail()\">\n    <header class=\"detail-content\">\n      <div class=\"left-nav-list-item todo-item flex-container\">\n        <check-mark [checked]=\"todoItem.isDone()\" (click)=\"todoItem.toggleDone()\"></check-mark>\n        <div class=\"content-list-item flex-container horizontal-center-alignment\">\n          <div class=\"primary-text-color\">\n            <div class=\"title primary-color\">\n              {{todoItem.getTitle()}}\n            </div>\n          </div>\n        </div>\n      </div>\n    </header>\n    <div class=\"form-group-container\">\n      <div class=\"form-group\">\n        <label>Description</label>\n        <p class=\"with-border\">\n          {{todoItem.getDescription()}}\n        </p>\n      </div>\n      <div class=\"form-group\">\n        <label>Created Date</label>\n        <div>{{todoItem.getCreationDate()}}</div>\n      </div>\n      <div class=\"form-group\">\n        <label>Updated Date</label>\n        <div>{{todoItem.getUpdateDate()}}</div>\n      </div>\n      <div class=\"form-group\">\n        <label>Done Date</label>\n        <div>{{todoItem.getDoneDate()}}</div>\n      </div>\n      <div class=\"form-group button-bar\">\n        <span class=\"ghost-button button float-left\" title=\"Mark this advanced TODO item as done\">Finish This TODO</span>\n        <span class=\"ghost-button button float-left\" title=\"Clone TODO item\">Clone This TODO</span>\n        <div style=\"clear: both;\"></div>\n      </div>\n    </div>\n  </div>\n  <div *ngIf=\"!showDetail()\" class=\"sub-heading\">\n    No TODO item selected to view detail\n  </div>\n</div>\n"
+module.exports = "<div>\n  <div *ngIf=\"showDetail()\">\n    <header class=\"detail-content\">\n      <div class=\"left-nav-list-item todo-item flex-container\">\n        <check-mark [checked]=\"todoItem.isDone()\" (click)=\"todoItem.toggleDone()\"></check-mark>\n        <div class=\"content-list-item flex-container horizontal-center-alignment\">\n          <div class=\"primary-text-color\">\n            <div class=\"title primary-color\">\n              {{todoItem.getTitle()}}\n            </div>\n          </div>\n        </div>\n      </div>\n    </header>\n    <div class=\"form-group-container\">\n      <div class=\"form-group\">\n        <label>Description</label>\n        <p class=\"with-border\">\n          {{todoItem.getDescription()}}\n        </p>\n      </div>\n      <div class=\"form-group\">\n        <label>Created Date</label>\n        <div>{{todoItem.getCreationDate()}}</div>\n      </div>\n      <div class=\"form-group\">\n        <label>Updated Date</label>\n        <div>{{todoItem.getUpdateDate()}}</div>\n      </div>\n      <div class=\"form-group\">\n        <label>Done Date</label>\n        <div>{{todoItem.getDoneDate()}}</div>\n      </div>\n      <div class=\"form-group button-bar\">\n        <span class=\"ghost-button button float-left\" title=\"Mark this advanced TODO item as done\" (click)=\"todoItem.markDone()\">Finish This TODO</span>\n        <span class=\"ghost-button button float-left\" title=\"Clone TODO item\">Clone This TODO</span>\n        <div style=\"clear: both;\"></div>\n      </div>\n    </div>\n  </div>\n  <div *ngIf=\"!showDetail()\" class=\"sub-heading\">\n    No TODO item selected to view detail\n  </div>\n</div>\n"
 
 /***/ }),
 
