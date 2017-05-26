@@ -332,7 +332,12 @@ var LeftNavComponent = (function () {
         return this.itemList;
     };
     LeftNavComponent.prototype.onMenuItemClicked = function (menuItem) {
-        this.currentLeftNavMenuItem = menuItem;
+        if (this.isMenuItemActivated(menuItem)) {
+            this.currentLeftNavMenuItem = null;
+        }
+        else {
+            this.currentLeftNavMenuItem = menuItem;
+        }
     };
     LeftNavComponent.prototype.onSubMenuItemClicked = function (subMenuItem) {
         this.currentLeftNavSubMenuItem = subMenuItem;
@@ -427,7 +432,7 @@ module.exports = "<app-left-nav [itemList]=\"leftNavMenuItemList\"></app-left-na
 /***/ 468:
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"app-left-nav-container app-full-v-height\">\n  <div class=\"app-left-nav-menu-item bg-color text-color\" *ngFor=\"let menuItem of getItemList()\"\n       (click)=\"onMenuItemClicked(menuItem)\" [ngClass]=\"{'active': isMenuItemActivated(menuItem)}\">\n    <div class=\"header app-transition-all app-flex-box align-items-center\">\n      <span class=\"icon app-flex-box justify-content-center\"><i class=\"fa {{menuItem.getFaIconClass()}}\"></i></span>\n      <span class=\"title\">{{menuItem.getTitle()}}</span>\n    </div>\n    <ul class=\"menu-item-list bg-color\" *ngIf=\"menuItem.hasMenuItemList()\">\n      <li class=\"menu-item app-flex-box align-items-center\" *ngFor=\"let subMenuItem of menuItem.getMenuItemList()\"\n        (click)=\"onSubMenuItemClicked(subMenuItem)\" [ngClass]=\"{'active': isSubMenuItemActivated(subMenuItem)}\">\n        <span class=\"icon app-flex-box justify-content-center\"><i class=\"fa fa-angle-right\"></i></span>\n        <span class=\"title\">{{subMenuItem.getTitle()}}</span>\n\n        <div class=\"icon app-flex-box justify-content-center align-right\" *ngIf=\"subMenuItem.hasStatisticInfo()\">\n          <span class=\"statistic {{subMenuItem.getStatisticInfoClass()}}\">{{subMenuItem.getStatisticInfo()}}</span>\n        </div>\n      </li>\n    </ul>\n  </div>\n</div>\n"
+module.exports = "<div class=\"app-left-nav-container app-full-v-height\">\n  <div class=\"app-left-nav-menu-item bg-color text-color\" *ngFor=\"let menuItem of getItemList()\"\n       [ngClass]=\"{'active': isMenuItemActivated(menuItem)}\">\n    <div class=\"header app-transition-all app-flex-box align-items-center\"\n         (click)=\"onMenuItemClicked(menuItem)\">\n      <span class=\"icon app-flex-box justify-content-center\"><i class=\"fa {{menuItem.getFaIconClass()}}\"></i></span>\n      <span class=\"title\">{{menuItem.getTitle()}}</span>\n      <span class=\"icon app-flex-box justify-content-center align-right\" *ngIf=\"menuItem.hasMenuItemList()\">\n         <i class=\"fa {{isMenuItemActivated(menuItem) ? 'fa-minus-circle' : 'fa-plus-circle'}}\"></i>\n      </span>\n    </div>\n    <ul class=\"menu-item-list bg-color\" *ngIf=\"menuItem.hasMenuItemList()\">\n      <li class=\"menu-item app-flex-box align-items-center\" *ngFor=\"let subMenuItem of menuItem.getMenuItemList()\"\n        (click)=\"onSubMenuItemClicked(subMenuItem)\" [ngClass]=\"{'active': isSubMenuItemActivated(subMenuItem)}\">\n        <span class=\"icon app-flex-box justify-content-center\"><i class=\"fa fa-angle-right\"></i></span>\n        <span class=\"title\">{{subMenuItem.getTitle()}}</span>\n\n        <div class=\"icon app-flex-box justify-content-center align-right\" *ngIf=\"subMenuItem.hasStatisticInfo()\">\n          <span class=\"statistic {{subMenuItem.getStatisticInfoClass()}}\">{{subMenuItem.getStatisticInfo()}}</span>\n        </div>\n      </li>\n    </ul>\n  </div>\n</div>\n"
 
 /***/ }),
 
