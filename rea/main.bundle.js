@@ -62,15 +62,15 @@ var leftNavJson = [
     },
     {
         title: 'Hồ sơ',
-        faIconClass: 'fa-envelop',
+        faIconClass: 'fa-envelope',
         menuItemList: [
-            { title: 'HS yêu cầu' },
-            { title: 'HS chờ phân công' },
-            { title: 'HS đang thẩm định' },
-            { title: 'HS chờ kiểm soát' },
-            { title: 'HS chờ trình duyệt' },
-            { title: 'HS chờ duyệt phát hành' },
-            { title: 'HS đã xuất chứng thư' }
+            { title: 'HS yêu cầu', count: 3, statisticClass: 'app-request-record' },
+            { title: 'HS chờ phân công', count: 25, statisticClass: 'app-pending-assignment' },
+            { title: 'HS đang thẩm định', count: 11, statisticClass: 'app-pending-appraisal' },
+            { title: 'HS chờ kiểm soát', count: 0, statisticClass: 'app-pending-inspection' },
+            { title: 'HS chờ trình duyệt', count: 1, statisticClass: 'app-pending-review' },
+            { title: 'HS chờ duyệt phát hành', count: 0, statisticClass: 'app-pending-release-approval' },
+            { title: 'HS đã xuất chứng thư', count: 0, statisticClass: 'app-released-certificate' }
         ]
     },
     {
@@ -113,7 +113,7 @@ function constructLeftNav(leftNavJson) {
             var leftNavSubMenuItemJson = void 0, i = 0, iLen = leftNavItemJson.menuItemList.length;
             for (; i < iLen; i++) {
                 leftNavSubMenuItemJson = leftNavItemJson.menuItemList[i];
-                leftNavItem.addMenuItem(new __WEBPACK_IMPORTED_MODULE_2__components_left_nav_left_nav_sub_menu_item__["a" /* LeftNavSubMenuItem */](leftNavSubMenuItemJson.title));
+                leftNavItem.addMenuItem(new __WEBPACK_IMPORTED_MODULE_2__components_left_nav_left_nav_sub_menu_item__["a" /* LeftNavSubMenuItem */](leftNavSubMenuItemJson.title, leftNavSubMenuItemJson.count, leftNavSubMenuItemJson.statisticClass));
             }
         }
         leftNavItemList.push(leftNavItem);
@@ -232,6 +232,29 @@ var LeftNavMenuItem = (function () {
         this.menuItemList.push(subMenuItem);
         return this;
     };
+    LeftNavMenuItem.prototype.hasMenuItemList = function () {
+        return this.menuItemList.length > 0;
+    };
+    LeftNavMenuItem.prototype.getMenuItemList = function () {
+        return this.menuItemList;
+    };
+    LeftNavMenuItem.prototype.getFaIconClass = function () {
+        return this.faIconClass;
+    };
+    LeftNavMenuItem.prototype.getTitle = function () {
+        return this.title;
+    };
+    LeftNavMenuItem.prototype.equals = function (o) {
+        if (this === o) {
+            return true;
+        }
+        else if (o instanceof LeftNavMenuItem) {
+            return o.getTitle() === this.title;
+        }
+        else {
+            return false;
+        }
+    };
     return LeftNavMenuItem;
 }());
 //# sourceMappingURL=left-nav-menu-item.js.map
@@ -244,11 +267,37 @@ var LeftNavMenuItem = (function () {
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return LeftNavSubMenuItem; });
 var LeftNavSubMenuItem = (function () {
-    function LeftNavSubMenuItem(title, count) {
+    function LeftNavSubMenuItem(title, count, statisticClass) {
         if (title === void 0) { title = 'Unknown'; }
+        if (count === void 0) { count = null; }
+        if (statisticClass === void 0) { statisticClass = 'app-default-statistic'; }
         this.title = title;
         this.count = count;
+        this.statisticClass = statisticClass;
     }
+    LeftNavSubMenuItem.prototype.hasStatisticInfo = function () {
+        return this.count !== null;
+    };
+    LeftNavSubMenuItem.prototype.getStatisticInfo = function () {
+        return this.count;
+    };
+    LeftNavSubMenuItem.prototype.getTitle = function () {
+        return this.title;
+    };
+    LeftNavSubMenuItem.prototype.getStatisticInfoClass = function () {
+        return this.statisticClass;
+    };
+    LeftNavSubMenuItem.prototype.equals = function (o) {
+        if (this === o) {
+            return true;
+        }
+        else if (o instanceof LeftNavSubMenuItem) {
+            return o.getTitle() === this.title;
+        }
+        else {
+            return false;
+        }
+    };
     return LeftNavSubMenuItem;
 }());
 //# sourceMappingURL=left-nav-sub-menu-item.js.map
@@ -274,8 +323,25 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var LeftNavComponent = (function () {
     function LeftNavComponent() {
         this.cssClass = 'app-left-nav';
+        this.currentLeftNavMenuItem = null;
+        this.currentLeftNavSubMenuItem = null;
     }
     LeftNavComponent.prototype.ngOnInit = function () {
+    };
+    LeftNavComponent.prototype.getItemList = function () {
+        return this.itemList;
+    };
+    LeftNavComponent.prototype.onMenuItemClicked = function (menuItem) {
+        this.currentLeftNavMenuItem = menuItem;
+    };
+    LeftNavComponent.prototype.onSubMenuItemClicked = function (subMenuItem) {
+        this.currentLeftNavSubMenuItem = subMenuItem;
+    };
+    LeftNavComponent.prototype.isMenuItemActivated = function (menuItem) {
+        return this.currentLeftNavMenuItem && this.currentLeftNavMenuItem.equals(menuItem);
+    };
+    LeftNavComponent.prototype.isSubMenuItemActivated = function (subMenuItem) {
+        return this.currentLeftNavSubMenuItem && this.currentLeftNavSubMenuItem.equals(subMenuItem);
     };
     __decorate([
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["c" /* HostBinding */])('attr.class'), 
@@ -341,7 +407,7 @@ exports = module.exports = __webpack_require__(78)();
 
 
 // module
-exports.push([module.i, ".app-left-nav-container {\n  position: relative;\n  cursor: pointer;\n  background-color: #0c0b0d;\n  width: 250px;\n}\n.app-left-nav-container.collapsed {\n  max-width: 40px;\n  display: inline-block;\n}\n.app-left-nav-container.collapsed .menu-item-list,\n.app-left-nav-container.collapsed .title,\n.app-left-nav-container.collapsed .icon.align-right {\n  display: none;\n}\n.app-left-nav-container.collapsed .header:hover,\n.app-left-nav-container.collapsed .app-left-nav-menu-item.active .header {\n  background-color: inherit;\n  color: inherit;\n}\n\n/*ELEMENT*/\n.app-left-nav-container .header {\n  min-height: 48px;\n}\n.app-left-nav-container .icon {\n  min-width: 40px;\n}\n.app-left-nav-container .title {\n  margin-left: 8px;\n}\n.app-left-nav-container .app-left-nav-menu-item.active .header {\n  background-color: #76badf;\n  color: #eefcff;\n  font-weight: bold;\n}\n.app-left-nav-container .menu-item-list {\n  margin: 0;\n  padding: 0;\n  list-style-type: none;\n}\n.app-left-nav-container .menu-item {\n  min-height: 40px;\n}\n.app-left-nav-container .header:hover,\n.app-left-nav-container .menu-item:hover,\n.app-left-nav-container .menu-item.active {\n  background-color: #142a2f;\n  color: #eff0f0;\n  transition: all 250ms;\n}\n.app-left-nav-container .statistic {\n  padding: 5px 8px 3px;\n  border-radius: 25px;\n  font-weight: bolder;\n}\n.app-left-nav-container .app-left-nav-menu-item {\n  background-color: #010001;\n  color: #686868;\n}\n\n/*STYLE*/\n.app-left-nav-container * {\n  font-size: 11px;\n  font-weight: bold;\n}\n", ""]);
+exports.push([module.i, ".app-left-nav-container {\n  position: relative;\n  cursor: pointer;\n  background-color: #0c0b0d;\n  width: 250px;\n}\n.app-left-nav-container.collapsed {\n  max-width: 40px;\n  display: inline-block;\n}\n.app-left-nav-container.collapsed .menu-item-list,\n.app-left-nav-container.collapsed .title,\n.app-left-nav-container.collapsed .icon.align-right {\n  display: none;\n}\n.app-left-nav-container.collapsed .header:hover,\n.app-left-nav-container.collapsed .app-left-nav-menu-item.active .header {\n  background-color: inherit;\n  color: inherit;\n}\n\n/*ELEMENT*/\n.app-left-nav-container .header {\n  min-height: 48px;\n}\n.app-left-nav-container .icon {\n  min-width: 40px;\n}\n.app-left-nav-container .title {\n  margin-left: 8px;\n}\n.app-left-nav-container .app-left-nav-menu-item.active .header {\n  background-color: #76badf;\n  color: #eefcff;\n  font-weight: bold;\n}\n.app-left-nav-container .app-left-nav-menu-item.active .menu-item-list {\n  display: block;\n}\n.app-left-nav-container .menu-item-list {\n  margin: 0;\n  padding: 0;\n  list-style-type: none;\n  display: none;\n}\n.app-left-nav-container .menu-item {\n  min-height: 40px;\n}\n.app-left-nav-container .header:hover,\n.app-left-nav-container .menu-item:hover,\n.app-left-nav-container .menu-item.active {\n  background-color: #142a2f;\n  color: #eff0f0;\n  transition: all 250ms;\n}\n.app-left-nav-container .statistic {\n  padding: 5px 8px 3px;\n  border-radius: 25px;\n  font-weight: bolder;\n}\n.app-left-nav-container .app-left-nav-menu-item {\n  background-color: #010001;\n  color: #686868;\n}\n\n/*STYLE*/\n.app-left-nav-container * {\n  font-size: 11px;\n  font-weight: bold;\n}\n", ""]);
 
 // exports
 
@@ -361,7 +427,7 @@ module.exports = "<app-left-nav [itemList]=\"leftNavMenuItemList\"></app-left-na
 /***/ 468:
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"app-left-nav-container app-full-v-height\">\n  <div class=\"app-left-nav-menu-item bg-color text-color\">\n    <div class=\"header app-transition-all app-flex-box align-items-center\">\n      <span class=\"icon app-flex-box justify-content-center\"><i class=\"fa fa-home\"></i></span>\n      <span class=\"title\">Control Panel</span>\n    </div>\n  </div>\n  <div class=\"app-left-nav-menu-item bg-color text-color active\">\n    <div class=\"header app-transition-all app-flex-box align-items-center\">\n      <span class=\"icon app-flex-box justify-content-center\"><i class=\"fa fa-envelope\"></i></span>\n      <span class=\"title\">Record</span>\n      <span class=\"icon app-flex-box justify-content-center align-right\">\n        <i class=\"fa fa-plus-circle\"></i>\n      </span>\n    </div>\n    <ul class=\"menu-item-list bg-color\">\n      <li class=\"menu-item app-flex-box align-items-center\">\n        <span class=\"icon app-flex-box justify-content-center\"><i class=\"fa fa-angle-right\"></i></span>\n        <span class=\"title\">Request Record</span>\n        <span class=\"icon app-flex-box justify-content-center align-right\">\n          <span class=\"statistic app-request-record\">1</span>\n        </span>\n      </li>\n      <li class=\"menu-item app-flex-box align-items-center active\">\n        <span class=\"icon app-flex-box justify-content-center\"><i class=\"fa fa-angle-right\"></i></span>\n        <span class=\"title\">Pending Assignment Record</span>\n        <span class=\"icon app-flex-box justify-content-center align-right\">\n          <span class=\"statistic app-pending-assignment\">25</span>\n        </span>\n      </li>\n      <li class=\"menu-item app-flex-box align-items-center\">\n        <span class=\"icon app-flex-box justify-content-center\"><i class=\"fa fa-angle-right\"></i></span>\n        <span class=\"title\">Pending Appraisal Record</span>\n        <span class=\"icon app-flex-box justify-content-center align-right\">\n          <span class=\"statistic app-pending-appraisal\">7</span>\n        </span>\n      </li>\n      <li class=\"menu-item app-flex-box align-items-center\">\n        <span class=\"icon app-flex-box justify-content-center\"><i class=\"fa fa-angle-right\"></i></span>\n        <span class=\"title\">Pending Inspection Record</span>\n        <span class=\"icon app-flex-box justify-content-center align-right\">\n          <span class=\"statistic app-pending-inspection\">0</span>\n        </span>\n      </li>\n      <li class=\"menu-item app-flex-box align-items-center\">\n        <span class=\"icon app-flex-box justify-content-center\"><i class=\"fa fa-angle-right\"></i></span>\n        <span class=\"title\">Pending Review Record</span>\n        <span class=\"icon app-flex-box justify-content-center align-right\">\n          <span class=\"statistic app-pending-review\">0</span>\n        </span>\n      </li>\n      <li class=\"menu-item app-flex-box align-items-center\">\n        <span class=\"icon app-flex-box justify-content-center\"><i class=\"fa fa-angle-right\"></i></span>\n        <span class=\"title\">Pending Release Approval Record</span>\n        <span class=\"icon app-flex-box justify-content-center align-right\">\n          <span class=\"statistic app-pending-release-approval\">0</span>\n        </span>\n      </li>\n      <li class=\"menu-item app-flex-box align-items-center\">\n        <span class=\"icon app-flex-box justify-content-center\"><i class=\"fa fa-angle-right\"></i></span>\n        <span class=\"title\">Pending Release Certificate Record</span>\n        <span class=\"icon app-flex-box justify-content-center align-right\">\n          <span class=\"statistic app-pending-release-certificate\">0</span>\n        </span>\n      </li>\n    </ul>\n  </div>\n  <div class=\"app-left-nav-menu-item bg-color text-color\">\n    <div class=\"header app-transition-all app-flex-box align-items-center\">\n      <span class=\"icon app-flex-box justify-content-center\"><i class=\"fa fa-file\"></i></span>\n      <span class=\"title\">Report</span>\n      <span class=\"icon app-flex-box justify-content-center align-right\">\n        <i class=\"fa fa-plus-circle\"></i>\n      </span>\n    </div>\n  </div>\n  <div class=\"app-left-nav-menu-item bg-color text-color\">\n    <div class=\"header app-transition-all app-flex-box align-items-center\">\n      <span class=\"icon app-flex-box justify-content-center\"><i class=\"fa fa-handshake-o\"></i></span>\n      <span class=\"title\">Contract</span>\n      <span class=\"icon app-flex-box justify-content-center align-right\">\n        <i class=\"fa fa-plus-circle\"></i>\n      </span>\n    </div>\n  </div>\n  <div class=\"app-left-nav-menu-item bg-color text-color\">\n    <div class=\"header app-transition-all app-flex-box align-items-center\">\n      <span class=\"icon app-flex-box justify-content-center\"><i class=\"fa fa-handshake-o\"></i></span>\n      <span class=\"title\">Debt</span>\n      <span class=\"icon app-flex-box justify-content-center align-right\">\n        <i class=\"fa fa-plus-circle\"></i>\n      </span>\n    </div>\n  </div>\n  <div class=\"app-left-nav-menu-item bg-color text-color\">\n    <div class=\"header app-transition-all app-flex-box align-items-center\">\n      <span class=\"icon app-flex-box justify-content-center\"><i class=\"fa fa-gears\"></i></span>\n      <span class=\"title\">Admin</span>\n      <span class=\"icon app-flex-box justify-content-center align-right\">\n        <i class=\"fa fa-plus-circle\"></i>\n      </span>\n    </div>\n  </div>\n</div>\n"
+module.exports = "<div class=\"app-left-nav-container app-full-v-height\">\n  <div class=\"app-left-nav-menu-item bg-color text-color\" *ngFor=\"let menuItem of getItemList()\"\n       (click)=\"onMenuItemClicked(menuItem)\" [ngClass]=\"{'active': isMenuItemActivated(menuItem)}\">\n    <div class=\"header app-transition-all app-flex-box align-items-center\">\n      <span class=\"icon app-flex-box justify-content-center\"><i class=\"fa {{menuItem.getFaIconClass()}}\"></i></span>\n      <span class=\"title\">{{menuItem.getTitle()}}</span>\n    </div>\n    <ul class=\"menu-item-list bg-color\" *ngIf=\"menuItem.hasMenuItemList()\">\n      <li class=\"menu-item app-flex-box align-items-center\" *ngFor=\"let subMenuItem of menuItem.getMenuItemList()\"\n        (click)=\"onSubMenuItemClicked(subMenuItem)\" [ngClass]=\"{'active': isSubMenuItemActivated(subMenuItem)}\">\n        <span class=\"icon app-flex-box justify-content-center\"><i class=\"fa fa-angle-right\"></i></span>\n        <span class=\"title\">{{subMenuItem.getTitle()}}</span>\n\n        <div class=\"icon app-flex-box justify-content-center align-right\" *ngIf=\"subMenuItem.hasStatisticInfo()\">\n          <span class=\"statistic {{subMenuItem.getStatisticInfoClass()}}\">{{subMenuItem.getStatisticInfo()}}</span>\n        </div>\n      </li>\n    </ul>\n  </div>\n</div>\n"
 
 /***/ }),
 
